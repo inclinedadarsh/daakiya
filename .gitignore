@@ -12,6 +12,15 @@ client/dist
 client/dist-ssr
 client/*.local
 
+# Python (FastAPI server)
+server/**/__pycache__
+server/.env
+server/.pytest_cache/
+server/*.pyc
+server/*.pyo
+server/*.pyd
+server/venv/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
