@@ -1,15 +1,27 @@
+import axios from "axios";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
-import { urlAtom, responseAtom } from "./lib/atoms";
+import { urlAtom, responseAtom, isLoadingAtom } from "./lib/atoms";
 import { useAtom } from "jotai";
+import { Loader2 } from "lucide-react";
 
 function App() {
   const [url, setUrl] = useAtom(urlAtom);
   const [response, setResponse] = useAtom(responseAtom);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
-  const handleClick = () => {
-    console.log(url);
+  const handleClick = async () => {
+    try {
+      setIsLoading(true);
+
+      const responseData = await axios.get(url);
+      setResponse(responseData.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -26,7 +38,9 @@ function App() {
             className='mt-2'
           />
         </div>
-        <Button onClick={handleClick}>Send Request</Button>
+        <Button className='w-36' onClick={handleClick} disabled={isLoading}>
+          {isLoading ? <Loader2 className='animate-spin' /> : "Send Request"}
+        </Button>
       </div>
       <p className='w-full min-h-40 border border-border rounded-md'>
         {response}
