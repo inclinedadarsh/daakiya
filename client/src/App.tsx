@@ -1,4 +1,5 @@
 import axios from "axios";
+import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -12,11 +13,14 @@ function App() {
   const [response, setResponse] = useAtom(responseAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
+  const urlSchema = z.string().url();
+
   const handleClick = async () => {
     try {
       setIsLoading(true);
+      urlSchema.parse(url);
       if (url === "") {
-        toast.error("Please enter a url!");
+        toast.error("Please enter a valid url!");
         return;
       }
       const responseData = await axios.post("http://127.0.0.1:8000/url", {
@@ -25,7 +29,14 @@ function App() {
       setResponse(responseData.data.response);
       console.log(responseData);
     } catch (error) {
-      console.error(error);
+      if (error instanceof z.ZodError) {
+        toast.error("Input is not a valid URL!");
+      } else if (axios.isAxiosError(error)) {
+        console.error("Axios Error: ", error.response?.data || error.message);
+        toast.error("An error occurred during the request.");
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
