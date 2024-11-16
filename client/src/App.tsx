@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
@@ -14,6 +15,10 @@ function App() {
   const handleClick = async () => {
     try {
       setIsLoading(true);
+      if (url === "") {
+        toast.error("Please enter a url!");
+        return;
+      }
       const responseData = await axios.post("http://127.0.0.1:8000/url", {
         url: url,
       });
