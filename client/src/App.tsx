@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
@@ -11,7 +12,18 @@ function App() {
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
   const handleClick = async () => {
-    // TODO: Add logic to fetch request and render loading
+    try {
+      setIsLoading(true);
+      const responseData = await axios.post("http://127.0.0.1:8000/url", {
+        url: url,
+      });
+      setResponse(responseData.data.response);
+      console.log(responseData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -32,7 +44,7 @@ function App() {
           {isLoading ? <Loader2 className='animate-spin' /> : "Send Request"}
         </Button>
       </div>
-      <p className='w-full min-h-40 border border-border rounded-md'>
+      <p className='w-full h-40 border border-border rounded-md overflow-scroll'>
         {response}
       </p>
     </main>
